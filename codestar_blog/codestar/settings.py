@@ -1,18 +1,10 @@
-"""Minimal Django settings for local development and testing."""
 import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-secret-for-local')
-
-# For Heroku deployment set DEBUG False. Locally you can set DJANGO_SECRET_KEY
-# and re-enable DEBUG if needed for development.
-DEBUG = False
-
-# Allow Heroku host; '*' was present for local development earlier. We keep '*'
-# so local dev still works, and explicitly include the herokuapp domain.
-ALLOWED_HOSTS = ['*', '.herokuapp.com']
+SECRET_KEY = 'change-me-please-for-production'
+DEBUG = True
+ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -53,6 +45,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'codestar.wsgi.application'
+ASGI_APPLICATION = 'codestar.asgi.application'
 
 DATABASES = {
     'default': {
@@ -69,6 +62,4 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
