@@ -1,9 +1,16 @@
 import os
+import sys
 from pathlib import Path
+
+# Optional helper to parse DATABASE_URL (Heroku)
+try:
+    import dj_database_url
+except Exception:
+    dj_database_url = None
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ALLOWED_HOSTS = ['.herokuapp.com', 'localhost', '127.0.0.1']
 
 
@@ -51,12 +58,23 @@ TEMPLATES = [
 WSGI_APPLICATION = 'codestar.wsgi.application'
 ASGI_APPLICATION = 'codestar.asgi.application'
 
-DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
-}
+if dj_database_url and os.environ.get("DATABASE_URL"):
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+    }
+else:
+    # Fallback to local SQLite for development and tests
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
+# When running tests ensure we use sqlite in-memory or a local file
 if 'test' in sys.argv:
     DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
+    DATABASES['default']['NAME'] = BASE_DIR / 'test_db.sqlite3'
 
 CSRF_TRUSTED_ORIGINS = [
     "https://*.codeinstitute-ide.net/",
